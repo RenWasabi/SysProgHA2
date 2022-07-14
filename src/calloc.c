@@ -28,6 +28,21 @@ void my_calloc_init(void * mem, size_t mem_size){
 
 	/* Unser Zeiger für das Next Fit Verfahren */
 	last_allocation = beginning;
+	
+	//custom für mich zum Testen
+	printf("beginning: %p\n", beginning);
+	printf("&(beginning): %p\n", &(beginning));
+	printf("beginning->next: %p\n", beginning->next);
+	printf("&(beginning->next): %p\n", &(beginning->next));
+	printf("beginning->prev: %p\n", beginning->prev);
+	printf("&(beginning->prev): %p\n", &(beginning->prev));
+	printf("beginning->size: %lu\n", beginning->size);
+	printf("&(beginning->size): %p\n\n", &(beginning->size));
+
+	printf("sizeof(beginning): %lu\n", sizeof(beginning));
+	printf("sizeof(beginning->next): %lu\n", sizeof(beginning->next));
+	printf("sizeof(beginning->size): %lu\n\n", sizeof(beginning->size));
+	
 }
 
 /* +------------------------------------+ *
