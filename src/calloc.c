@@ -28,26 +28,65 @@ void my_calloc_init(void * mem, size_t mem_size){
 
 	/* Unser Zeiger für das Next Fit Verfahren */
 	last_allocation = beginning;
-	
-	//custom für mich zum Testen
+	//test
 	printf("beginning: %p\n", beginning);
-	printf("&(beginning): %p\n", &(beginning));
-	printf("beginning->next: %p\n", beginning->next);
-	printf("&(beginning->next): %p\n", &(beginning->next));
-	printf("beginning->prev: %p\n", beginning->prev);
-	printf("&(beginning->prev): %p\n", &(beginning->prev));
-	printf("beginning->size: %lu\n", beginning->size);
-	printf("&(beginning->size): %p\n\n", &(beginning->size));
-
-	printf("sizeof(beginning): %lu\n", sizeof(beginning));
-	printf("sizeof(beginning->next): %lu\n", sizeof(beginning->next));
-	printf("sizeof(beginning->size): %lu\n\n", sizeof(beginning->size));
-	
+	printf("last_allocation: %p\n", last_allocation);
 }
 
 /* +------------------------------------+ *
  * | Hier ist Platz für Hilfsfunktionen | *
  * +------------------------------------+ */
+
+size_t round_to_8(size_t raw_size){
+  size_t rounded_size;
+
+  if (raw_size % 8 == 0){
+    rounded_size = raw_size;}
+  else {
+    size_t factor = raw_size/8;
+    rounded_size = (factor+1)*8;}
+
+  return rounded_size;
+}
+
+int read_LSB(size_t size){
+  //check value for 2^0
+  int LSB = size & (1 << 0);
+  return LSB;
+}
+
+// we need to work with return value because of call by value
+size_t set_LSB(size_t size, int value){
+  size_t new_size;
+
+  if (value == 0){
+    new_size = size &= ~(1 << 0);
+  }
+  else if (value == 1){
+  //set value (i.e. to 1) for 2^0
+  new_size = size |= 1 << 0;
+  }
+  else{
+    printf("invalid value in set_LSB request\n");
+  }
+  return new_size;
+}
+
+//not tested
+int read_memblock_status(mem_block* block){
+  int status = read_LSB(block->size);
+  return status;
+}
+
+// not tested
+void set_memblock_status(mem_block* block, int status){
+  size_t block_size = block->size;
+  size_t new_block_size;
+  new_block_size = set_LSB(block_size, status);
+  block->size = new_block_size;
+  return;  
+}
+
 
 
 

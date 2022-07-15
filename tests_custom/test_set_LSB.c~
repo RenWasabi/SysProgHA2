@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "../include/calloc.h"
+// Für memset
+#include <string.h>
+#include "../tests/calloc_helpers.h"
+
+// aus Test entnommen
+#define MEM_SIZE (512)
+MEMORY(MEM_SIZE, mem);
+
+int main(){
+
+  for (size_t i=0; i<33; i++){
+    int set_to = 0;
+    printf("LSB i: %d ", read_LSB(i));
+    set_LSB(i, set_to);
+    printf("set_to%d: %d\n", set_to, read_LSB(i));
+  }
+
+  
+  
+
+  return 0;
+}

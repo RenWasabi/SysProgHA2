@@ -56,4 +56,25 @@ void * my_calloc(size_t nmemb, size_t size, int c);
  */
 void my_free(void *ptr);
 
+
+// Hilfsfunktionen:
+
+// returns the input size rounded up to 8 ([Byte])
+size_t round_to_8(size_t raw_size);
+
+// returns the LSB of a size variable
+int read_LSB(size_t size);
+
+// returns size with bit set to value
+size_t set_LSB(size_t size, int value);
+
+// reads status of memblock
+// 1: used, 0: free
+int read_memblock_status(mem_block* block);
+
+// sets status of memblock
+// 1: used, 0: free
+void set_memblock_status(mem_block* block, int status);
+
+
 #endif
