@@ -76,5 +76,9 @@ int read_memblock_status(mem_block* block);
 // 1: used, 0: free
 void set_memblock_status(mem_block* block, int status);
 
+// create a new mem_block within the data segment of the mem_block prev
+// prev_actual_size is the actual space needed in the data segment of prev
+void* create_mem_block(mem_block* prev,size_t prev_actual_size);
+
 
 #endif
