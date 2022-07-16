@@ -80,5 +80,8 @@ void set_memblock_status(mem_block* block, int status);
 // prev_actual_size is the actual space needed in the data segment of prev
 void* create_mem_block(mem_block* prev,size_t prev_actual_size);
 
+// find fitting and free block using next_fit strategy
+mem_block* find_block_next_fit(size_t actual_needed);
+
 
 #endif

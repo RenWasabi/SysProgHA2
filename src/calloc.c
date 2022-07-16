@@ -28,34 +28,7 @@ void my_calloc_init(void * mem, size_t mem_size){
 
 	/* Unser Zeiger für das Next Fit Verfahren */
 	last_allocation = beginning;
-	//test
-	printf("beginning: %p\n", beginning);
-	printf("last_allocation: %p\n", last_allocation);
 
-
-
-	// for testing create_mem_block
-	size_t needed1 = 15;
-	size_t actual_needed1 = round_to_8(needed1);
-
-	void* data_seg2 = create_mem_block(beginning, actual_needed1);
-
-	printf("beginning: %p\n", beginning);
-
-	
-	printf("set_LSB(beginning->size,0): %d\n", set_LSB(beginning->size,0));
-	printf("read_LSB(beginning->size): %d\n", read_LSB(beginning->size));
-	printf("beginning->next: %p\n", beginning->next);
-	printf("beginning->prev: %p\n", beginning->prev);
-
-	mem_block* created = beginning->next;
-
-	printf("created: %p\n", created);
-	printf("set_LSB(created->size,0): %d\n", set_LSB(created->size,0));
-	printf("read_LSB(created->size): %d\n", read_LSB(created->size));
-	printf("created->next: %p\n", created->next);
-	printf("created->prev: %p\n", created->prev);
-	
 }
 
 /* +------------------------------------+ *
@@ -156,14 +129,90 @@ void* create_mem_block(mem_block* prev,size_t prev_actual_size){
 }
 
 
+// actual_needed should already be rounded to a multiple of 8
+mem_block* find_block_next_fit(size_t actual_needed){
+
+  // check first
+  mem_block* current = last_allocation;
+  int current_status = read_LSB(current->size);
+  size_t current_size = set_LSB(current->size, 0);
+  if ((current_status==0) && (current_size >= actual_needed)){
+    return current;
+  }
+  // if current is end of list, go to the beginning 
+  if (current->next == NULL){
+    current = MEM;
+  }
+  else{
+    current = current->next;
+  }
+
+  // check loop
+  while(current != last_allocation){
+    // just copied above code, couldn't think of more elegant way for now
+     current_status = read_LSB(current->size);
+     current_size = set_LSB(current->size, 0);
+     if ((current_status==0) && (current_size >= actual_needed)){
+     return current;
+     }
+
+    // if current is end of list, go to the beginning 
+    if (current->next == NULL){
+       current = MEM;
+     }
+    else{
+       current = current->next;
+     }
+  }
+
+  // went a circle, no fitting element
+  return NULL;
+}
+
+
 
 
 
 /* -------------------------------------- */
 
 void * my_calloc(size_t nmemb, size_t size, int c) {
-	// TODO
-	return NULL;
+  
+  // calculate needed memory space
+  size_t actual_needed = round_to_8(nmemb*size);
+  
+  // find fitting element
+  mem_block* reserve_elem = find_block_next_fit(actual_needed);
+  if (reserve_elem == NULL){
+    printf("Es könnte kein Speicher reserviert werden.");
+    return NULL;
+  }
+
+  // regular handling or splitting memory element
+  //the minimum size a new storage element requires
+  size_t new_elem_size = sizeof(mem_block)+8;
+  // since reserve_elem was chosen, LSB needs to be 0 anyway
+  // size >= needed, otherwise element wouldn't have been chosen, so upper limit is sufficient
+
+   // will be NULL in first cases, still initialized here for access
+  void* new_begin_data = NULL;
+  // Fall a) und c)
+  if (reserve_elem->size < actual_needed+new_elem_size){
+    reserve_elem->size = set_LSB(reserve_elem->size, 1);
+  }
+  // Fall b)
+  else{
+    // reserve_elem data will be adjusted in create function
+    new_begin_data = create_mem_block(reserve_elem, actual_needed);
+  }
+
+  last_allocation = reserve_elem;
+  // for easier calculations
+  void* reserve_elem_as_void = (void*) reserve_elem;
+  void* reserved_begin_data = reserve_elem_as_void+sizeof(mem_block);
+
+  // Speicher initialisieren
+
+  return reserved_begin_data;
 }
 
 void my_free(void *ptr){
