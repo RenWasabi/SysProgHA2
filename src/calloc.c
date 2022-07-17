@@ -243,6 +243,7 @@ void * my_calloc(size_t nmemb, size_t size, int c) {
   void* reserved_begin_data = reserve_elem_as_void+sizeof(mem_block);
 
   // Speicher initialisieren
+  memset(reserved_begin_data, c, set_LSB(reserve_elem->size, 0));
 
   return reserved_begin_data;
 }
