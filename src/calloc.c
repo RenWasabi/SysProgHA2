@@ -169,6 +169,37 @@ mem_block* find_block_next_fit(size_t actual_needed){
   return NULL;
 }
 
+mem_block* merge_with_prev(mem_block* back){
+  mem_block* prev = back->prev;
+  prev->size = prev->size+set_LSB(back->size,0)+sizeof(mem_block);
+  prev->size = set_LSB(prev->size, 0);
+  prev->next = back->next;
+  if (back->next != NULL){
+    back->next->prev = prev;
+  }
+  null_pointers(back);
+  return prev;  
+}
+
+mem_block* merge_with_next(mem_block* front){
+  mem_block* next = front->next;
+  mem_block* merged = merge_with_prev(next);
+  return merged;
+}
+
+mem_block* merge_two_sides(mem_block* middle){
+  mem_block* merged = merge_with_prev(middle);
+  merged = merge_with_next(merged);
+  return merged;
+}
+
+// not sure if this one is necessary
+void null_pointers(mem_block* block){
+  block->size = NULL;
+  block->next = NULL;
+  block->prev = NULL;
+  block = NULL;
+}
 
 
 
@@ -182,8 +213,9 @@ void * my_calloc(size_t nmemb, size_t size, int c) {
   
   // find fitting element
   mem_block* reserve_elem = find_block_next_fit(actual_needed);
+  // scheint korrekt ausgelöst zu werden (test oom.c)
   if (reserve_elem == NULL){
-    printf("Es könnte kein Speicher reserviert werden.");
+    //printf("Es konnte kein Speicher reserviert werden.");
     return NULL;
   }
 
@@ -216,5 +248,47 @@ void * my_calloc(size_t nmemb, size_t size, int c) {
 }
 
 void my_free(void *ptr){
-	// TODO
+
+  // check for invalid input
+  long ptr_number = (long) ptr;
+  if ((ptr == NULL) || (ptr_number % 8 != 0)){
+    return;
+  }
+  
+  void* block_to_free_v = ptr-sizeof(mem_block);
+  mem_block* block_to_free = (mem_block*) block_to_free_v;
+
+  int status_prev;
+  if (block_to_free->prev != NULL){
+  status_prev = read_LSB(block_to_free->prev->size);
+  } else {
+    // -1: prev does not exist
+    status_prev = -1;    
+  }
+  int status_next;
+  if (block_to_free->next != NULL){
+  status_next = read_LSB(block_to_free->next->size);
+  } else {
+    // -1: prev does not exist
+    status_next = -1;
+  }
+
+  if (status_prev == 0){
+    if (status_next == 0){
+      merge_two_sides(block_to_free);
+    }
+    else{
+      merge_with_prev(block_to_free);
+    }
+  }
+  else {
+    if (status_next == 0){
+      merge_with_next(block_to_free);
+    }
+    // Einzelfreigabe
+    else {
+      block_to_free->size = set_LSB(block_to_free->size, 0);
+    }
+  }
+
 }
