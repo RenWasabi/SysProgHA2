@@ -70,6 +70,10 @@ int main() {
 		error++;
 	}
 
+	// added by me, otherwise valgrind shows a leak
+	// is this my business?
+	free(concat);
+
 	printf("Freeing everything\n");
 
 	my_free(str1);
