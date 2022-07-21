@@ -50,6 +50,18 @@ void set_info(addr_t* entry, pt_info info){
   return; 
 }
 
+int check_presence(addr_t entry){
+  // presence_bit is a 16 bit number with 15 zeros
+  // and the result as MSB
+  int presence_bit = entry & (1 << 15);
+  if (presence_bit == 0){
+    return 0;
+  }
+  else{
+    return 1;
+  }
+}
+
 
 /* -------------------------------------- */
 

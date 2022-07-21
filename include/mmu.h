@@ -102,4 +102,8 @@ int check_permission(addr_t va, req_type req);
 // for call by reference
 void set_info(addr_t* entry, pt_info info);
 
+// checks if the page is actually (valid) in physical memory
+// by returning the presence bit
+int check_presence(addr_t entry);
+
 #endif
