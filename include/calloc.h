@@ -83,5 +83,16 @@ void* create_mem_block(mem_block* prev,size_t prev_actual_size);
 // find fitting and free block using next_fit strategy
 mem_block* find_block_next_fit(size_t actual_needed);
 
+// not sure if this one is necessary
+void null_pointers(mem_block* block);
+
+// merges a block with the (free) block before it, returns merged block
+mem_block* merge_with_prev(mem_block* back);
+
+// merges a block with the (free) block after it, returns merged block
+mem_block* merge_with_next(mem_block* front);
+
+// merges a block with its previous and next block, returns merged block
+mem_block* merge_two_sides(mem_block* middle);
 
 #endif
