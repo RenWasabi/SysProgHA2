@@ -95,4 +95,7 @@ addr_t mmu_check_request(request r);
 // for testing, otherwise ptbr could only be accessed in mmu.c
 void* get_ptbr();
 
+// return 1 if addr permits the req access type, otherwise 0
+int check_permission(addr_t va, req_type req);
+
 #endif

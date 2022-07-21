@@ -15,6 +15,21 @@ void* get_ptbr(){
   return ptbr;
 }
 
+int check_permission(addr_t va, req_type req){
+  addr_t filter = 0b0000000000000111;
+  // the actual permissions
+  addr_t actual_perm = va & filter;
+  // an address with 0 except for our bit needed (mask for our req)
+  addr_t req_model = filter & req;
+  addr_t result = actual_perm & req_model;
+  if (result == 0){
+    return 0;
+  }
+  else{
+    return 1;
+  }  
+}
+
 
 /* -------------------------------------- */
 
