@@ -37,10 +37,16 @@ int switch_process(int proc_id)
 
 addr_t mmu_translate(addr_t va, req_type req)
 {
-	return MY_NULL;
+  return MY_NULL;
+  
 }
 
 addr_t mmu_check_request(request r)
 {
-	return MY_NULL;
+  // check if proc_id is valid and switch ptbr
+  if (switch_process(r.p_num) == 1){
+    //printf("invalid request (remove this warning)\n");
+    return MY_NULL;
+  }
+   return MY_NULL;
 }
