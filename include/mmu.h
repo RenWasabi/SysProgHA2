@@ -91,4 +91,8 @@ addr_t mmu_translate(addr_t va, req_type req);
  * @return: physische Adresse der Anfrage sonst NULL */
 addr_t mmu_check_request(request r);
 
+// Hilfsfunktionen
+// for testing, otherwise ptbr could only be accessed in mmu.c
+void* get_ptbr();
+
 #endif
