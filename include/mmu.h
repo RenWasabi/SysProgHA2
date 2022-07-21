@@ -98,4 +98,8 @@ void* get_ptbr();
 // return 1 if addr permits the req access type, otherwise 0
 int check_permission(addr_t va, req_type req);
 
+// a pointer to the address, that is &address, needs to be handed over
+// for call by reference
+void set_info(addr_t* entry, pt_info info);
+
 #endif

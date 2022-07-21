@@ -30,6 +30,26 @@ int check_permission(addr_t va, req_type req){
   }  
 }
 
+void set_info(addr_t* entry, pt_info info){
+  int position;
+  if (info == PRESENCE){
+    position = 15;
+  }
+  else if (info == ACCESSED){
+    position = 14;
+  }
+  else if (info == MODIFIED){
+    position = 13;
+  }
+  else{
+    printf("Error occured while trying to set info bit.\n");
+    return;
+  }
+
+  *(entry) = *(entry) | 1 << position;
+  return; 
+}
+
 
 /* -------------------------------------- */
 
