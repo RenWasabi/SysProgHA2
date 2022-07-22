@@ -69,6 +69,15 @@ int read_page_nr(addr_t va){
   return pg_nmb;
 }
 
+addr_t construct_phys_addr(addr_t va, addr_t pt_entry){
+  addr_t mask_offset = 0b0000000011111111;
+  addr_t offset = va & mask_offset;
+  addr_t mask_kachel = 0b0000111100000000;
+  addr_t kachel_nr = pt_entry & mask_kachel;
+  addr_t phys_addr = offset | kachel_nr;
+  return phys_addr;
+}
+
 
 /* -------------------------------------- */
 

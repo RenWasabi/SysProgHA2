@@ -109,4 +109,6 @@ int check_presence(addr_t entry);
 // returns the page number corresponding to a virtual address 
 int read_page_nr(addr_t va);
 
+addr_t construct_phys_addr(addr_t va, addr_t pt_entry);
+
 #endif
