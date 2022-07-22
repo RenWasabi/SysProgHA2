@@ -62,6 +62,13 @@ int check_presence(addr_t entry){
   }
 }
 
+int read_page_nr(addr_t va){
+  addr_t mask = 0b0000111100000000;
+  addr_t pg_nmb = va & mask;
+  pg_nmb = pg_nmb >> 8;
+  return pg_nmb;
+}
+
 
 /* -------------------------------------- */
 

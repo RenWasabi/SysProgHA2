@@ -106,4 +106,7 @@ void set_info(addr_t* entry, pt_info info);
 // by returning the presence bit
 int check_presence(addr_t entry);
 
+// returns the page number corresponding to a virtual address 
+int read_page_nr(addr_t va);
+
 #endif
