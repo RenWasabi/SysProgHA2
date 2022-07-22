@@ -15,10 +15,10 @@ void* get_ptbr(){
   return ptbr;
 }
 
-int check_permission(addr_t va, req_type req){
+int check_permission(addr_t entry, req_type req){
   addr_t filter = 0b0000000000000111;
   // the actual permissions
-  addr_t actual_perm = va & filter;
+  addr_t actual_perm = entry & filter;
   // an address with 0 except for our bit needed (mask for our req)
   addr_t req_model = filter & req;
   addr_t result = actual_perm & req_model;
@@ -100,8 +100,25 @@ int switch_process(int proc_id)
 
 addr_t mmu_translate(addr_t va, req_type req)
 {
-  return MY_NULL;
-  
+  // access the page table entry corresponding to the virtual addr
+  addr_t* pg_table = (addr_t*) ptbr;
+  addr_t entry = pg_table[read_page_nr(va)];
+  // check if the entry is valid (present)
+  if (check_presence(entry)==0){
+    return MY_NULL
+  }
+  // check if the process is allowed to access in the requested way
+  if (check_permission(entry, req)==0){
+    return MY_NULL
+  }
+  // set info in page table
+  set_info(&entry, ACCESSED);
+  if (req == WRITE){
+    set_info(&entry, MODIFIED);
+  }
+  // calculate and return the physical address
+  addr_t phys_addr = construct_phys_addr(va, entry);
+  return phys_addr;
 }
 
 addr_t mmu_check_request(request r)
@@ -111,5 +128,6 @@ addr_t mmu_check_request(request r)
     //printf("invalid request (remove this warning)\n");
     return MY_NULL;
   }
-   return MY_NULL;
+  addr_t phys_addr = mmu_translate(r.addr, r.type);
+  return phys_addr;
 }

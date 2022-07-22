@@ -96,7 +96,7 @@ addr_t mmu_check_request(request r);
 void* get_ptbr();
 
 // return 1 if addr permits the req access type, otherwise 0
-int check_permission(addr_t va, req_type req);
+int check_permission(addr_t entry, req_type req);
 
 // a pointer to the address, that is &address, needs to be handed over
 // for call by reference
