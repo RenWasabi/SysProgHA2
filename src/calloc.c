@@ -169,6 +169,16 @@ mem_block* find_block_next_fit(size_t actual_needed){
   return NULL;
 }
 
+// not sure if this one is necessary
+// needs to be declared above merge_with_prev since we're not allowed
+// to modify header
+void null_pointers(mem_block* block){
+  block->size = NULL;
+  block->next = NULL;
+  block->prev = NULL;
+  block = NULL;
+}
+
 mem_block* merge_with_prev(mem_block* back){
   mem_block* prev = back->prev;
   prev->size = prev->size+set_LSB(back->size,0)+sizeof(mem_block);
@@ -192,17 +202,6 @@ mem_block* merge_two_sides(mem_block* middle){
   merged = merge_with_next(merged);
   return merged;
 }
-
-// not sure if this one is necessary
-void null_pointers(mem_block* block){
-  block->size = NULL;
-  block->next = NULL;
-  block->prev = NULL;
-  block = NULL;
-}
-
-
-
 
 /* -------------------------------------- */
 
