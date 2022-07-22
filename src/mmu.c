@@ -45,7 +45,6 @@ void set_info(addr_t* entry, pt_info info){
     printf("Error occured while trying to set info bit.\n");
     return;
   }
-
   *(entry) = *(entry) | 1 << position;
   return; 
 }
@@ -102,6 +101,7 @@ addr_t mmu_translate(addr_t va, req_type req)
 {
   // access the page table entry corresponding to the virtual addr
   addr_t* pg_table = (addr_t*) ptbr;
+  // this is a copy (call by value, we need to write the modified entry back in the end
   addr_t entry = pg_table[read_page_nr(va)];
   // check if the entry is valid (present)
   if (check_presence(entry)==0){
@@ -112,12 +112,14 @@ addr_t mmu_translate(addr_t va, req_type req)
     return MY_NULL
   }
   // set info in page table
-  set_info(&entry, ACCESSED);
-  if (req == WRITE){
+    set_info(&entry, ACCESSED);
+    if (req == WRITE){
     set_info(&entry, MODIFIED);
   }
   // calculate and return the physical address
   addr_t phys_addr = construct_phys_addr(va, entry);
+  //write correctly modified entry back into table
+  pg_table[read_page_nr(va)] = entry;
   return phys_addr;
 }
 
